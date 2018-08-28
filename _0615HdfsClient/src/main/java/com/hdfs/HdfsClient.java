@@ -1,4 +1,4 @@
-package com.atguigu.hdfs;
+package com.hdfs;
 
 import java.net.URI;
 

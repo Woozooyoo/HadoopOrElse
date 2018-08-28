@@ -1,4 +1,4 @@
-package com.atguigu.weibo;
+package com.weibo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

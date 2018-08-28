@@ -1,4 +1,4 @@
-package com.atguigu.weibo;
+package com.weibo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -431,6 +431,9 @@ public class WeiBo {
 		return messages;
 	}
 
+	private List<Message> getSomebodyContent(String otherUid) {
+		return null;
+	}
 	/**
 	 * 测试
 	 *
@@ -460,8 +463,8 @@ public class WeiBo {
 	}
 
 	//看某人微博
-	public static void scanSomebodyContentTest(WeiBo weiBo, String uid, String otherUid) throws IOException {
-		List<Message> list = weiBo.getAttendsContent (uid);
+	public static void scanSomebodyContentTest(WeiBo weiBo, String otherUid) throws IOException {
+		List<Message> list = weiBo.getSomebodyContent (otherUid);
 		System.out.println (list);
 	}
 
