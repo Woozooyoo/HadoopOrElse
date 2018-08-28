@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/_0723HBase/pom.xml" />
+        <option value="$PROJECT_DIR$/_0615HdfsClient/pom.xml" />
+        <option value="$PROJECT_DIR$/_0618mapreduce/pom.xml" />
+        <option value="$PROJECT_DIR$/_0707youtube/pom.xml" />
+        <option value="$PROJECT_DIR$/_0717kafka/pom.xml" />
+        <option value="$PROJECT_DIR$/_0802weibo/pom.xml" />
+        <option value="$PROJECT_DIR$/_0628zookeeper/pom.xml" />
+        <option value="$PROJECT_DIR$/_0824FlumeMysqlSource/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="RemoteRepositoriesConfiguration">
+    <remote-repository>
+      <option name="id" value="eb3c9385-7e9d-4e12-86c8-53b4b63e338a" />
+      <option name="name" value="eb3c9385-7e9d-4e12-86c8-53b4b63e338a" />
+      <option name="url" value="http://maven.aliyun.com/nexus/content/groups/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="02ab8e99-6a2a-4a4d-b3c6-16a6471968b2" />
+      <option name="name" value="02ab8e99-6a2a-4a4d-b3c6-16a6471968b2" />
+      <option name="url" value="http://maven.aliyun.com/nexus/content/repositories/central/" />
+    </remote-repository>
+  </component>
+</project>

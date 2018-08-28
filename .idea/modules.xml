@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Hadoop2018.iml" filepath="$PROJECT_DIR$/Hadoop2018.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0615HdfsClient/_0615HdfsClient.iml" filepath="$PROJECT_DIR$/_0615HdfsClient/_0615HdfsClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0618mapreduce/_0618mapreduce.iml" filepath="$PROJECT_DIR$/_0618mapreduce/_0618mapreduce.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0628zookeeper/_0628zookeeper.iml" filepath="$PROJECT_DIR$/_0628zookeeper/_0628zookeeper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0707youtube/_0707youtube.iml" filepath="$PROJECT_DIR$/_0707youtube/_0707youtube.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0717kafka/_0717kafka.iml" filepath="$PROJECT_DIR$/_0717kafka/_0717kafka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0723HBase/_0723HBase.iml" filepath="$PROJECT_DIR$/_0723HBase/_0723HBase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0802weibo/_0802weibo.iml" filepath="$PROJECT_DIR$/_0802weibo/_0802weibo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0824FlumeMysqlSource/_0824FlumeMysqlSource.iml" filepath="$PROJECT_DIR$/_0824FlumeMysqlSource/_0824FlumeMysqlSource.iml" />
+    </modules>
+  </component>
+</project>

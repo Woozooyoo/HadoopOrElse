@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="_0615HdfsClient" />
+        <module name="_0618mapreduce" />
+        <module name="_0628zookeeper" />
+        <module name="_0707youtube" />
+        <module name="_0717kafka" />
+        <module name="_0723HBase" />
+        <module name="_0802weibo" />
+        <module name="_0824FlumeMysqlSource" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="_0615HdfsClient" target="1.8" />
+      <module name="_0618mapreduce" target="1.8" />
+      <module name="_0628zookeeper" target="1.8" />
+      <module name="_0707youtube" target="1.8" />
+      <module name="_0717kafka" target="1.8" />
+      <module name="_0723HBase" target="1.8" />
+      <module name="_0802weibo" target="1.8" />
+      <module name="_0824FlumeMysqlSource" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
