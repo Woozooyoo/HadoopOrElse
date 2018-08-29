@@ -36,8 +36,9 @@ import org.apache.hadoop.hbase.util.Bytes;
  * 1、内容content表 rowKey:发布人uid_ts   cf:info     c:content   value微博内容
  * 2、用户的关注和粉丝表 rowKey:uid   cf是attend和fan c:otherUid    value:otherUid
  * 3、用户的收件箱表 rowKey:我的uid     cf:info     c:关注的人的Uid  value:otherUid_ts   ts:ts
- *
+ * <p>
  * 互相关注维度 共同关注 可能认识的人
+ *
  * @author Adrian
  */
 public class WeiBo {
@@ -49,6 +50,7 @@ public class WeiBo {
 	private static final byte[] TABLE_CONTENT = Bytes.toBytes ("ns_weibo:content");
 	private static final byte[] TABLE_RELATION = Bytes.toBytes ("ns_weibo:relation");
 	private static final byte[] TABLE_INBOX = Bytes.toBytes ("ns_weibo:inbox");
+	private static final byte[] TABLE_MUTUAL = Bytes.toBytes ("ns_weibo:mutual");
 
 	private void init() throws IOException {
 		//创建微博业务命名空间
@@ -187,6 +189,36 @@ public class WeiBo {
 	}
 
 	/**
+	 * 表名：ns_weibo:mutual
+	 * rowKey：用户id
+	 * columnFamily：mutualConcern
+	 * column：当前用户所互相关注的人的用户id
+	 * value：用户id
+	 * versions:100
+	 * ROW:  1001	column=info:1003, value=1003_1533389940929
+	 * ROW:  1003	column=info:1001, value=1001_1533396509519
+	 */
+	private void initTableMutualConcern() throws IOException {
+		Connection connection = ConnectionFactory.createConnection (conf);
+		Admin admin = connection.getAdmin ();
+
+		HTableDescriptor inboxTableDescriptor = new HTableDescriptor (TableName.valueOf (TABLE_MUTUAL));
+		HColumnDescriptor infoColumnDescriptor = new HColumnDescriptor ("mutualConcern");
+		//设置块缓存
+		infoColumnDescriptor.setBlockCacheEnabled (true);
+		//设置块缓存大小 2M
+		infoColumnDescriptor.setBlocksize (2 * 1024 * 1024);
+		//设置版本
+		infoColumnDescriptor.setMinVersions (1);
+		infoColumnDescriptor.setMaxVersions (1);
+
+		inboxTableDescriptor.addFamily (infoColumnDescriptor);
+		admin.createTable (inboxTableDescriptor);
+		admin.close ();
+		connection.close ();
+	}
+
+	/**
 	 * 发布微博
 	 * a、向微博内容表中添加刚发布的内容，多了一个微博rowkey
 	 * b、向发布微博人的粉丝的收件箱表中，添加该微博rowkey
@@ -249,9 +281,10 @@ public class WeiBo {
 
 	/**
 	 * 关注操作
-	 * a、在用户关系表中，对当前主动操作的用户id进行添加关注的操作
+	 * a、在用户关系表中，对我要关注的用户id进行添加关注的操作
 	 * b、在用户关系表中，对被关注的人的用户id，添加粉丝操作
-	 * c、对当前操作的用户的收件箱表中，添加他所关注的人的最近的微博rowkey
+	 * c、对我要关注的用户id，查询是否在我的粉丝中，如果在，就在互相关注表中双向添加互相关注
+	 * d、对当前操作的用户的收件箱表中，添加他所关注的人的最近的微博rowkey
 	 *
 	 * @param uid     操作者id
 	 * @param attends 关注的人的id数组
@@ -263,6 +296,7 @@ public class WeiBo {
 		/**a 对当前主动操作的用户id进行添加关注的操作*/
 		Connection connection = ConnectionFactory.createConnection (conf);
 		Table relationTable = connection.getTable (TableName.valueOf (TABLE_RELATION));
+		Table mutualTable = connection.getTable (TableName.valueOf (TABLE_MUTUAL));
 
 		List<Put> putsList = new ArrayList<> ();
 		//在微博用户关系表中，添加新关注的好友
@@ -279,7 +313,34 @@ public class WeiBo {
 		putsList.add (attendPut);//为什么在外面， 因为attendPut在for外面创建的
 		relationTable.put (putsList);
 
-		/**c 对当前操作的用户的收件箱表中，添加他所关注的人的最近的微博rowKey*/
+		/**c、对我要关注的用户id，查询是否在我的粉丝中，如果在，就在互相关注表中双向添加互相关注*/
+		List<Put> putsMutualList = new ArrayList<> ();
+		Put mutualPut = new Put (Bytes.toBytes (uid));
+		//对我要关注的用户id，查询是否在我的粉丝中
+		Get get = new Get (Bytes.toBytes (uid));
+		Result resultAttend = relationTable.get (get);
+		int i = 0;
+		for (String attend : attends) {
+			//对我要关注的用户id，查询是否在我的粉丝中
+			if (resultAttend.containsColumn (Bytes.toBytes ("fans"), Bytes.toBytes (attend))) {
+				i++;
+				//如果在，我就加入这个id到互相关注表中
+				mutualPut.addColumn (Bytes.toBytes ("mutualConcern"), Bytes.toBytes (attend), Bytes.toBytes (attend));
+				//这个id也把我加到互相关注表中
+				Put mutualPut2 = new Put (Bytes.toBytes (attend));
+				mutualPut2.addColumn (Bytes.toBytes ("mutualConcern"), Bytes.toBytes (uid), Bytes.toBytes (uid));
+				putsMutualList.add (mutualPut2);//为什么在里面， 因为mutualPut2在for里面创建的
+			}
+		}
+		if (i > 0) {
+			putsMutualList.add (mutualPut);//为什么在外面， 因为mutualPut在for外面创建的
+		}
+
+		if (putsMutualList.size () > 0) {
+			mutualTable.put (putsMutualList);
+		}
+
+		/**d 对当前操作的用户的收件箱表中，添加他所关注的人的最近的微博rowKey*/
 		//取得微博内容表
 		Table contentTable = connection.getTable (TableName.valueOf (TABLE_CONTENT));
 		Scan scan = new Scan ();
@@ -319,6 +380,7 @@ public class WeiBo {
 		inboxTable.close ();
 		contentTable.close ();
 		relationTable.close ();
+		mutualTable.close ();
 		connection.close ();
 	}
 
@@ -326,7 +388,8 @@ public class WeiBo {
 	 * 取关操作
 	 * a、在用户关系表中，删除你要取关的那个人的用户id
 	 * b、在用户关系表中，删除被你取关的那个人的粉丝中的当前操作用户id
-	 * c、删除微博收件箱表中你取关的人所发布的微博的rowkey
+	 * c、双向取消互相关注
+	 * d、删除微博收件箱表中你取关的人所发布的微博的rowkey
 	 *
 	 * @param uid     操作者id
 	 * @param attends 关注的人的id数组
@@ -342,16 +405,30 @@ public class WeiBo {
 		Delete attendDelete = new Delete (Bytes.toBytes (uid));
 		List<Delete> deletes = new ArrayList<> ();
 		for (String attend : attends) {
+			attendDelete.addColumns (Bytes.toBytes ("attends"), Bytes.toBytes (attend));
 			/**b 在对面用户关系表中移除粉丝*/
-			attendDelete.addColumn (Bytes.toBytes ("attends"), Bytes.toBytes (attend));
-			Delete delete = new Delete (Bytes.toBytes (attend));
-			delete.addColumn (Bytes.toBytes ("fans"), Bytes.toBytes ("uid"));
-			deletes.add (delete);
+			Delete fansDelete = new Delete (Bytes.toBytes (attend));
+			fansDelete.addColumns (Bytes.toBytes ("fans"), Bytes.toBytes (uid));
+			deletes.add (fansDelete);
 		}
 		deletes.add (attendDelete);
 		relationTable.delete (deletes);
 
-		/**c、删除微博收件箱表中你取关的人所发布的微博的rowkey*/
+		/**c、双向取消互相关注*/
+		Table mutualTable = connection.getTable (TableName.valueOf (TABLE_MUTUAL));
+		Delete mutualDelete = new Delete (Bytes.toBytes (uid));
+		List<Delete> mutualDeletes = new ArrayList<> ();
+		for (String attend : attends) {
+			mutualDelete.addColumns (Bytes.toBytes ("mutualConcern"), Bytes.toBytes (attend));
+			/**b 在对面用户关系表中移除粉丝*/
+			Delete mutualDelete2 = new Delete (Bytes.toBytes (attend));
+			mutualDelete2.addColumns (Bytes.toBytes ("mutualConcern"), Bytes.toBytes (uid));
+			mutualDeletes.add (mutualDelete2);
+		}
+		mutualDeletes.add (mutualDelete);
+		mutualTable.delete (mutualDeletes);
+
+		/**d、删除微博收件箱表中你取关的人所发布的微博的rowkey*/
 		Table inboxTable = connection.getTable (TableName.valueOf (TABLE_INBOX));
 
 		Delete delete = new Delete (Bytes.toBytes (uid));
@@ -363,6 +440,7 @@ public class WeiBo {
 		//释放资源
 		inboxTable.close ();
 		relationTable.close ();
+		mutualTable.close ();
 		connection.close ();
 	}
 
@@ -431,9 +509,48 @@ public class WeiBo {
 		return messages;
 	}
 
-	private List<Message> getSomebodyContent(String otherUid) {
-		return null;
+	/**
+	 * 查看某人的微博内容
+	 *
+	 * @return
+	 * @throws IOException
+	 */
+	private List<Message> getSomebodyContent(String otherUid) throws IOException {
+		Connection connection = ConnectionFactory.createConnection (conf);
+		Table contentTable = connection.getTable (TableName.valueOf (TABLE_CONTENT));
+		Scan scan = new Scan ();
+		//用于存放扫描出来的我所关注的人的微博rowKey
+		List<Message> messagesList = new ArrayList<> ();
+
+		//1002_152321283837374
+		//扫描微博rowkey，使用rowfilter过滤器
+		RowFilter filter = new RowFilter (CompareFilter.CompareOp.EQUAL, new SubstringComparator (otherUid + "_"));
+		scan.setFilter (filter);
+		//通过该scan扫描结果
+		ResultScanner resultScanner = contentTable.getScanner (scan);
+		for (Result r : resultScanner) {
+			Cell[] cs = r.rawCells ();
+			for (Cell c : cs) {
+				//取得contentTable中的rowkey
+				String rk = Bytes.toString (r.getRow ());
+				//发布微博人的UID
+				String publishUID = rk.split ("_")[0];
+				long publishTS = Long.valueOf (rk.split ("_")[1]);
+
+				Message msg = new Message ();
+				msg.setUid (publishUID);
+				msg.setTimestamp (publishTS);
+				msg.setContent (Bytes.toString (CellUtil.cloneValue (c)));
+
+				messagesList.add (msg);
+			}
+		}
+
+		contentTable.close ();
+		connection.close ();
+		return messagesList;
 	}
+
 	/**
 	 * 测试
 	 *
@@ -470,19 +587,20 @@ public class WeiBo {
 
 	public static void main(String[] args) throws IOException {
 		WeiBo wb = new WeiBo ();
-//		wb.init();
+//		wb.initTableMutualConcern ();
 //
 //		publishWeiBoTest(wb, "1002", "哦，我的上帝，我要踢爆他的屁股");
 //		publishWeiBoTest(wb, "1002", "哦，我的上帝，我还要踢爆他的屁股");
 //		publishWeiBoTest(wb, "1002", "哦，我的上帝，我非要踢爆他的屁股");
 //		publishWeiBoTest(wb, "1003", "哦，我的上帝，我也要踢爆他的屁股");
 //
-//		addAttendTest(wb, "1001", "1002", "1003");
-//		removeAttendTest(wb, "1001", "1002");
+//		addAttendTest (wb, "1002", "1001");
+//		removeAttendTest (wb, "1002", "1001");
+//		removeAttendTest (wb, "1001", "1002", "1003");
 //		scanWeiBoContentTest(wb, "1001");
 
 //		addAttendTest (wb, "1003", "1002", "1001","1004");
-		scanWeiBoContentTest (wb, "1003");
+//		scanWeiBoContentTest (wb, "1003");
 
 //		publishWeiBoTest (wb, "1001", "嘿嘿嘿11");
 //		publishWeiBoTest (wb, "1001", "嘿嘿嘿22");
@@ -491,5 +609,6 @@ public class WeiBo {
 //		publishWeiBoTest (wb, "1001", "嘿嘿嘿55");
 //		publishWeiBoTest (wb, "1001", "嘿嘿嘿66");
 //		scanWeiBoContentTest (wb, "1003");
+//		scanSomebodyContentTest (wb, "1001");
 	}
 }

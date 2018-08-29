@@ -39,7 +39,7 @@ public class Message {
 
 		SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 
-		return "Message <<用户ID：" + uid + "\n 发布时间：" + sdf.format (date) + "\n 微博内容：" + content + ">>\n";
+		return "<ROW: " + uid + "\trelease time=" + sdf.format (date) + "\tcontentValue=" + content + ">\n";
 	}
 
 }

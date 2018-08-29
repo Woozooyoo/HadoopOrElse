@@ -116,7 +116,7 @@ public class HBaseDemo {
 		Table table = ConnectionFactory.createConnection (conf).getTable (TableName.valueOf (tableName));
 
 		Delete delete = new Delete (Bytes.toBytes (rowKey));
-//		delete.addColumns (Bytes.toBytes (columnFamily), Bytes.toBytes (column));//删除所有版本的
+//		delete.addColumns (Bytes.toBytes (columnFamily), Bytes.toBytes (column));//删除所有版本的,有时间戳则是标记这个时间之前所有的为删除
 //		delete.addColumn (Bytes.toBytes (columnFamily), Bytes.toBytes (column));//删除最新版本
 
 		table.delete (delete);
@@ -209,7 +209,7 @@ public class HBaseDemo {
 //		 addRow("staff", "1003", "info1", "name", "kotlin");
 //		 deleteRow("staff", "1001", null);
 //		 deleteMultiRow("staff", "1001", "1002", "1003");
-		getAllRows ("ns_weibo:relation");
+		getAllRows ("ns_weibo:inbox");
 //		 getRow("staff", "1001");
 //		 System.out.println(isExist("fruit"));
 	}
