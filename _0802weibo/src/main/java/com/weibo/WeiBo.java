@@ -63,10 +63,10 @@ public class WeiBo {
 //		publishFunctionDaoTest( "1003", "哦，我的上帝，我也要踢爆他的屁股");
 //
 //		addAttendTest ( "1002", "1001");
-		removeAttendTest ( "1002", "1001");
+//		removeAttendTest ( "1001", "1002");
 //		removeAttendTest ( "1001", "1002", "1003");
 //		addAttendTest ( "1003", "1002", "1001");
-//		addAttendTest ( "1001", "1002", "1003");
+		addAttendTest ( "1001",  "1003");
 
 //		scanFunctionDaoContentTest ("1001");
 //		scanFunctionDaoContentTest ("1002");
@@ -79,6 +79,6 @@ public class WeiBo {
 //		publishFunctionDaoTest ( "1001", "嘿嘿嘿55");
 //		publishFunctionDaoTest ( "1001", "嘿嘿嘿66");
 //		scanFunctionDaoContentTest ( "1003");
-//		scanSomebodyContentTest ( "1001");
+//		scanSomebodyContentTest ( "1003");
 	}
 }

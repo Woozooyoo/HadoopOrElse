@@ -89,13 +89,12 @@ public class AddAttends extends FunctionDao {
 		Put inboxPut = new Put (Bytes.toBytes (uid));
 		//用于存放扫描出来的我所关注的人的微博rowKey
 
+		//标记inboxPut里面是否传值
+		int flag = 0;
 		for (String attend : attends) {
 			/*Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
 			ResultScanner results = contentTable.getScanner(scan);
-			for (Result result : results) {
-				byte[] row = result.getRow();
-				inboxPut.addColumn(Bytes.toBytes("info"), Bytes.toBytes(attend), row);
-			}*/
+			*/
 			Scan scan = new Scan ();
 			//1002_152321283837374
 			//扫描微博rowkey，使用rowfilter过滤器
@@ -103,18 +102,17 @@ public class AddAttends extends FunctionDao {
 			scan.setFilter (filter);
 			//通过该scan扫描结果
 			ResultScanner results = contentTable.getScanner (scan);
-			//当前被关注者未发布任何微博
-			if (results.next ().isEmpty ()) {
-				continue;
-			}
+			//当前被关注者是否发过微博
 			for (Result result : results) {
+				flag++;
 				byte[] rowKey = result.getRow ();
-				String attendWeiboTS = Bytes.toString (rowKey).split ("_")[1];
-				inboxPut.addColumn (Bytes.toBytes ("info"), Bytes.toBytes (attend), Long.valueOf (attendWeiboTS), rowKey);
+				inboxPut.addColumn (Bytes.toBytes ("info"), Bytes.toBytes (attend), System.currentTimeMillis (), rowKey);
 			}
 		}
 		//操作inboxTable
-		inboxTable.put (inboxPut);
+		if (flag > 0) {
+			inboxTable.put (inboxPut);
+		}
 
 		//关闭，释放资源
 		inboxTable.close ();
