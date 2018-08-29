@@ -203,13 +203,13 @@ public class HBaseDemo {
 	// Test
 	public static void main(String[] args) throws IOException {
 //		 createTable("hbase_book", "info");
-//		 deleteTable("ns_ct:calllog");
+		 deleteTable("ns_weibo:mutual");
 //		 addRow("staff", "1001", "info2", "name", "bob");
 //		 addRow("staff", "1001", "info1", "ok", "ojbk");
 //		 addRow("staff", "1003", "info1", "name", "kotlin");
 //		 deleteRow("staff", "1001", null);
 //		 deleteMultiRow("staff", "1001", "1002", "1003");
-		getAllRows ("ns_weibo:inbox");
+//		getAllRows ("ns_weibo:inbox");
 //		 getRow("staff", "1001");
 //		 System.out.println(isExist("fruit"));
 	}
