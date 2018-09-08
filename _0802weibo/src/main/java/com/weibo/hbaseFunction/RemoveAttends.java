@@ -37,7 +37,7 @@ public class RemoveAttends extends FunctionDao {
 		//得到用户关系表/***/
 		Table relationTable = connection.getTable (TableName.valueOf (TABLE_RELATION));
 		Delete attendDelete = new Delete (Bytes.toBytes (uid));
-		List<Delete> deletes = new ArrayList<> ();
+		ArrayList<Delete> deletes = new ArrayList<> ();
 		for (String attend : attends) {
 			attendDelete.addColumns (Bytes.toBytes ("attends"), Bytes.toBytes (attend));
 			/**b 在对面用户关系表中移除粉丝*/

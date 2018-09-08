@@ -32,7 +32,7 @@ public class GetSomebodyContent extends FunctionDao {
 		Table contentTable = connection.getTable (TableName.valueOf (TABLE_CONTENT));
 		Scan scan = new Scan ();
 		//用于存放扫描出来的我所关注的人的微博rowKey
-		List<Message> messagesList = new ArrayList<> ();
+		ArrayList<Message> messagesList = new ArrayList<> ();
 
 		//1002_152321283837374
 		//扫描微博rowkey，使用rowfilter过滤器
@@ -40,11 +40,10 @@ public class GetSomebodyContent extends FunctionDao {
 		scan.setFilter (filter);
 		//通过该scan扫描结果
 		ResultScanner resultScanner = contentTable.getScanner (scan);
-		for (Result r : resultScanner) {
-			Cell[] cs = r.rawCells ();
-			for (Cell c : cs) {
+		for (Result result : resultScanner) {
+			for (Cell c : result.rawCells ()) {
 				//取得contentTable中的rowkey
-				String rk = Bytes.toString (r.getRow ());
+				String rk = Bytes.toString (result.getRow ());
 				//发布微博人的UID
 				String publishUID = rk.split ("_")[0];
 				long publishTS = Long.valueOf (rk.split ("_")[1]);

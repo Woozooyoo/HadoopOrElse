@@ -33,7 +33,7 @@ public class AddAttends extends FunctionDao {
 		//参数过滤:如果没有传递关注的人的uid，则直接返回
 		if (attends == null || attends.length <= 0 || uid == null) return;
 
-		/**a 对当前主动操作的用户id进行添加关注的操作*/
+		/************** a 对当前主动操作的用户id进行添加关注的操作 *********************************/
 		Connection connection = ConnectionFactory.createConnection (conf);
 		Table relationTable = connection.getTable (TableName.valueOf (TABLE_RELATION));
 		Table mutualTable = connection.getTable (TableName.valueOf (TABLE_MUTUAL));
@@ -53,17 +53,15 @@ public class AddAttends extends FunctionDao {
 		putsList.add (attendPut);//为什么在外面， 因为attendPut在for外面创建的
 		relationTable.put (putsList);
 
-		/**c、对我要关注的用户id，查询是否在我的粉丝中，如果在，就在互相关注表中双向添加互相关注*/
+		/************** c、对我要关注的用户id，查询是否在我的粉丝中，如果在，就在互相关注表中双向添加互相关注 *********************************/
 		List<Put> putsMutualList = new ArrayList<> ();
 		Put mutualPut = new Put (Bytes.toBytes (uid));
 		//对我要关注的用户id，查询是否在我的粉丝中
 		Get get = new Get (Bytes.toBytes (uid));
 		Result resultAttend = relationTable.get (get);
-		int i = 0;
 		for (String attend : attends) {
 			//对我要关注的用户id，查询是否在我的粉丝中
 			if (resultAttend.containsColumn (Bytes.toBytes ("fans"), Bytes.toBytes (attend))) {
-				i++;
 				//如果在，我就加入这个id到互相关注表中
 				mutualPut.addColumn (Bytes.toBytes ("mutualConcern"), Bytes.toBytes (attend), Bytes.toBytes (attend));
 				//这个id也把我加到互相关注表中
@@ -72,15 +70,14 @@ public class AddAttends extends FunctionDao {
 				putsMutualList.add (mutualPut2);//为什么在里面， 因为mutualPut2在for里面创建的
 			}
 		}
-		if (i > 0) {
+
+		if (!mutualPut.isEmpty ())
 			putsMutualList.add (mutualPut);//为什么在外面， 因为mutualPut在for外面创建的
-		}
 
-		if (putsMutualList.size () > 0) {
+		if (putsMutualList.size () > 0)
 			mutualTable.put (putsMutualList);
-		}
 
-		/**d 对当前操作的用户的收件箱表中，添加他所关注的人的最近的微博rowKey*/
+		/************** d 对当前操作的用户的收件箱表中，添加他所关注的人的最近的微博rowKey *********************************/
 
 		//取得微博内容表
 		Table contentTable = connection.getTable (TableName.valueOf (TABLE_CONTENT));
@@ -90,7 +87,6 @@ public class AddAttends extends FunctionDao {
 		//用于存放扫描出来的我所关注的人的微博rowKey
 
 		//标记inboxPut里面是否传值
-		int flag = 0;
 		for (String attend : attends) {
 			/*Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
 			ResultScanner results = contentTable.getScanner(scan);
@@ -104,15 +100,14 @@ public class AddAttends extends FunctionDao {
 			ResultScanner results = contentTable.getScanner (scan);
 			//当前被关注者是否发过微博
 			for (Result result : results) {
-				flag++;
 				byte[] rowKey = result.getRow ();
+				//  需要传系统时间为时间戳，如果不传的话，收件箱批量Put里只有一个时间版本，也不能传发布时间为时间戳（取关再关注就没有收件箱了），
 				inboxPut.addColumn (Bytes.toBytes ("info"), Bytes.toBytes (attend), System.currentTimeMillis (), rowKey);
 			}
 		}
 		//操作inboxTable
-		if (flag > 0) {
+		if (!inboxPut.isEmpty ())
 			inboxTable.put (inboxPut);
-		}
 
 		//关闭，释放资源
 		inboxTable.close ();

@@ -55,7 +55,7 @@ public class PublishContent extends FunctionDao {
 		}
 
 		//先取出所有fans的用户id,用用户id当RowKey new一个Put，存放于一个集合之中
-		List<Put> putsList = new ArrayList<> ();
+		ArrayList<Put> putsList = new ArrayList<> ();
 
 		for (Cell cell : result.rawCells ()) {
 			//取出当前用户所有的粉丝uid

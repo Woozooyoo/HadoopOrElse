@@ -39,10 +39,9 @@ public class GetAttendsContent extends FunctionDao {
 
 		Result inboxResult = inboxTable.get (inboxGet);
 		//准备一个存放所有微博rowkey的集合
-		List<byte[]> rowkeys = new ArrayList<> ();
-		Cell[] inboxCells = inboxResult.rawCells ();
+		ArrayList<byte[]> rowkeys = new ArrayList<> ();
 		//组装rowkeys集合
-		for (Cell cell : inboxCells) {
+		for (Cell cell : inboxResult.rawCells ()) {
 			rowkeys.add (CellUtil.cloneValue (cell));
 		}
 
