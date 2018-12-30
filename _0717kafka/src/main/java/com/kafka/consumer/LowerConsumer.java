@@ -18,7 +18,7 @@ import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.message.MessageAndOffset;
 
 public class LowerConsumer {
-	private List<String> m_replicaBrokers = new ArrayList<> ();
+	private List<String> m_replicaBrokers;
 
 	public LowerConsumer() {
 		m_replicaBrokers = new ArrayList<> ();
@@ -39,6 +39,8 @@ public class LowerConsumer {
 		seeds.add ("hadoop104");
 		// 端口
 		int port = Integer.parseInt ("9092");
+
+
 		try {
 			example.run (maxReads, topic, partition, seeds, port);
 		} catch (Exception e) {

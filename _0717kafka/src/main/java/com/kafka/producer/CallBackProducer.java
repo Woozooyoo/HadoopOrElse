@@ -28,14 +28,15 @@ public class CallBackProducer {
 		// value序列化
 		props.put ("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		// 自定义分区CustomPartitioner
-//		props.put("partitioner.class", "com.atguigu.kafka.partitioner.CustomPartitioner");
+//		props.put("partitioner.class", "com.kafka.partitioner.CustomPartitioner");
 
 		KafkaProducer<String, String> kafkaProducer = new KafkaProducer<> (props);
 
 		for (int i = 0; i < 50; i++) {
 			Thread.sleep (800);
 			//new Callback()回调匿名子类对象
-			kafkaProducer.send (new ProducerRecord<String, String> ("first", "hh" + i, "hh" + i), new Callback () {
+			kafkaProducer.send (new ProducerRecord<> ("first", "hh" + i, "hh" + i)
+					, new Callback () {
 				@Override
 				//回调函数
 				public void onCompletion(RecordMetadata metadata, Exception exception) {

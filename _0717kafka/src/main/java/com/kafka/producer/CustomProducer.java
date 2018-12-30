@@ -28,16 +28,20 @@ public class CustomProducer {
 		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
 		//为Producer注册拦截器
+		/*List<String> interceptorList = new ArrayList<>();
+		interceptorList.add("com.kafka.interceptor.TimeInterceptor");
+		interceptorList.add("com.kafka.interceptor.CounterInterceptor");
 		
-		List<String> interceptorList = new ArrayList<>();
-		interceptorList.add("com.atguigu.kafka.interceptor.TimeInterceptor");
-		interceptorList.add("com.atguigu.kafka.interceptor.CounterInterceptor");
-		
-		props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptorList);
+		props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptorList);*/
 		
 		KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-		
+
+		/*  （1）指定了partition，则直接使用；
+			（2）未指定partition但指定key，通过对key的value进行hash出一个partition；
+			（3）partition和key都未指定，使用轮询选出一个partition
+			*/
 		for (int i = 0; i < 50; i++) {
+			//如果不设置 key默认为null
 			producer.send(new ProducerRecord<> ("first", Integer.toString (i), "hello world-" + i));
 		}
 
