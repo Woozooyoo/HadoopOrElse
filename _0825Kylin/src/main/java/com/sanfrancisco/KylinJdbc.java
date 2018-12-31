@@ -20,14 +20,15 @@ public class KylinJdbc {
 		Connection connection = DriverManager.getConnection(KYLIN_URL, KYLIN_USER, KYLIN_PASSWD);
 
 		//预编译SQL
-		PreparedStatement ps = connection.prepareStatement("SELECT sum(sal) FROM emp group by deptno");
+		PreparedStatement ps = connection.prepareStatement("SELECT deptno,sum(sal) FROM emp group by deptno");
 
 		//执行查询
 		ResultSet resultSet = ps.executeQuery();
 
+		System.out.println("deptno\t" + "sum_sal");
 		//遍历打印
 		while (resultSet.next()) {
-			System.out.println(resultSet.getInt(1));
+			System.out.println(resultSet.getString (1)+"\t\t"+resultSet.getInt(2));
 		}
 	}
 }
