@@ -8,9 +8,13 @@
       <module fileurl="file://$PROJECT_DIR$/_0628zookeeper/_0628zookeeper.iml" filepath="$PROJECT_DIR$/_0628zookeeper/_0628zookeeper.iml" />
       <module fileurl="file://$PROJECT_DIR$/_0707youtube/_0707youtube.iml" filepath="$PROJECT_DIR$/_0707youtube/_0707youtube.iml" />
       <module fileurl="file://$PROJECT_DIR$/_0717kafka/_0717kafka.iml" filepath="$PROJECT_DIR$/_0717kafka/_0717kafka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0720redis/_0720redis.iml" filepath="$PROJECT_DIR$/_0720redis/_0720redis.iml" />
       <module fileurl="file://$PROJECT_DIR$/_0723HBase/_0723HBase.iml" filepath="$PROJECT_DIR$/_0723HBase/_0723HBase.iml" />
       <module fileurl="file://$PROJECT_DIR$/_0802weibo/_0802weibo.iml" filepath="$PROJECT_DIR$/_0802weibo/_0802weibo.iml" />
       <module fileurl="file://$PROJECT_DIR$/_0824FlumeMysqlSource/_0824FlumeMysqlSource.iml" filepath="$PROJECT_DIR$/_0824FlumeMysqlSource/_0824FlumeMysqlSource.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0825Kylin/_0825Kylin.iml" filepath="$PROJECT_DIR$/_0825Kylin/_0825Kylin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0720redis/secondKill/secondKill.iml" filepath="$PROJECT_DIR$/_0720redis/secondKill/secondKill.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_0720redis/verifi_code/verifi_code.iml" filepath="$PROJECT_DIR$/_0720redis/verifi_code/verifi_code.iml" />
     </modules>
   </component>
 </project>

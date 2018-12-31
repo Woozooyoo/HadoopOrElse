@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/_0720redis/seckill" />
+    <file type="web" url="file://$PROJECT_DIR$/_0720redis/secondKill" />
+    <file type="web" url="file://$PROJECT_DIR$/_0720redis/verifi_code" />
+  </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
@@ -11,7 +16,15 @@
         <option value="$PROJECT_DIR$/_0802weibo/pom.xml" />
         <option value="$PROJECT_DIR$/_0628zookeeper/pom.xml" />
         <option value="$PROJECT_DIR$/_0824FlumeMysqlSource/pom.xml" />
+        <option value="$PROJECT_DIR$/_0720redis/seckill/pom.xml" />
+        <option value="$PROJECT_DIR$/_0720redis/pom.xml" />
+        <option value="$PROJECT_DIR$/_0825Kylin/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/_0720redis/seckill/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
